@@ -3,28 +3,46 @@ pipeline {
 
     stages {
 
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/bhargavateja001/python-app.git'
+            }
+        }
+
         stage('Python Version') {
             steps {
-                sh 'python3 --version'
+                bat 'python --version'
+            }
+        }
+
+        stage('Upgrade pip') {
+            steps {
+                bat 'python -m pip install --upgrade pip'
+                bat 'pip --version'
             }
         }
 
         stage('Install Requirements') {
             steps {
-                sh 'python3 -m pip install --upgrade pip'
-                sh 'pip3 install -r requirements.txt'
+                bat 'python -m pip install -r requirements.txt'
             }
         }
 
-        stage('Run Tests') {
+        stage('Install PyInstaller') {
             steps {
-                sh 'pytest'
+                bat 'pip install pyinstaller'
             }
         }
 
-        stage('Build Application') {
+        stage('Run Unit Test') {
             steps {
-                sh 'pyinstaller --onefile app.py'
+                bat 'python -m unittest test_app.py'
+            }
+        }
+
+        stage('Create EXE') {
+            steps {
+                bat 'pyinstaller --onefile app.py'
             }
         }
     }
